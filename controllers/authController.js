@@ -2,7 +2,10 @@ import User from '../models/user'
 import cloudinary from 'cloudinary'
 import ErrorHandler from '../utils/errorHandler'
 import catchAsyncError from '../middlewares/catchAsyncError'
+import absoluteUrl from 'next-absolute-url'
 import APIFeatures from '../utils/apiFeatures'
+import sendMail from '../utils/sendmail'
+import crypto from 'crypto'
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -14,15 +17,11 @@ cloudinary.config({
 // GET ROOM => api/auth/register
 const userRegister = catchAsyncError(async (req, res) => {
 
-    console.log("User Register controller");
-
     const result = await cloudinary.v2.uploader.upload(req.body.avatar, {
         folder: 'bookit/avatars',
         width: '150',
         crop: 'scale'
     })
-
-    console.log("result", result);
 
     const { name, email, password } = req.body
 
@@ -54,7 +53,125 @@ const currentUserProfile = catchAsyncError(async (req, res) => {
 
 })
 
+
+const updateUserProfile = catchAsyncError(async (req, res) => {
+
+    const user = await User.findById(req.user._id);
+
+    if (user) {
+        user.name = req.body.name;
+        user.email = req.body.email;
+
+        if (req.body.password) user.password = req.body.password;
+    }
+
+    // Update avatar
+    if (req.body.avatar !== '') {
+
+        const image_id = user.avatar.public_id;
+
+        // Delete user previous image/avatar
+        await cloudinary.v2.uploader.destroy(image_id);
+
+        const result = await cloudinary.v2.uploader.upload(req.body.avatar, {
+            folder: 'bookit/avatars',
+            width: '150',
+            crop: 'scale'
+        })
+
+        user.avatar = {
+            public_id: result.public_id,
+            url: result.secure_url
+        }
+
+    }
+
+    await user.save()
+
+    res.status(200).json({
+        success: true,
+    })
+
+})
+
+// Forgot Password  /api/password/forgot
+const forgotPassword = catchAsyncError(async (req, res, next) => {
+
+    const user = await User.findOne({ email: req.body.email });
+
+    if (!user) {
+        return next(new ErrorHandler('User not found with this email', 404))
+    }
+
+    // get reset token
+    const resetToken = user.getResetPasswordToken()
+
+    await user.save({ validateBeforeSave: false })
+
+    // get origin
+    const { origin } = absoluteUrl(req)
+
+    // create reset password url
+    const resetUrl = `${origin}/password/reset/${resetToken}`
+
+    const message = `Your password reset url is as follow: \n\n ${resetUrl} \n\n If you have not requested to this email, then ignore it.`
+
+    try {
+        await sendMail({
+            email: user.email,
+            subject: 'Bookit password recovery',
+            message
+        })
+        res.status(200).json({
+            success: true,
+            message: `Email sent to: ${user.email}`
+        })
+    } catch (error) {
+        user.resetPasswordToken = undefined,
+            user.resetPasswordExpire = undefined
+
+        await user.save({ validateBeforeSave: false })
+
+        return next(new ErrorHandler(error.message, 500))
+
+    }
+})
+
+// Forgot Password  /api/password/reset/:token
+const passwordReset = catchAsyncError(async (req, res, next) => {
+
+
+    // hash the url token
+    const resetPasswordToken = crypto.createHash('sha256').update(req.query.token).digest('hex')
+
+    const user = await User.findOne({ resetPasswordToken, resetPasswordExpire: { $gt: Date.now() } });
+
+    if (!user) {
+        return next(new ErrorHandler('Password reset token is invalid or expire', 400))
+    }
+
+    if (req.body.password !== req.body.confirmPassword) {
+        return next(new ErrorHandler('Password is not match', 400))
+    }
+
+    // set the password
+    user.password = req.body.password
+
+    user.resetPasswordToken = undefined
+    user.resetPasswordExpire = undefined
+
+    await user.save()
+
+    res.status(200).json({
+        success: true,
+        message: "password update successfully"
+    })
+})
+
 export {
     userRegister,
-    currentUserProfile
+    currentUserProfile,
+    updateUserProfile,
+    forgotPassword,
+    passwordReset
 }

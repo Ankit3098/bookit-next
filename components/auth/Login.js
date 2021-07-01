@@ -20,7 +20,6 @@ const Login = () => {
             password
         })
         setLoading(false)
-        console.log(result);
         if (result.error) {
             toast.error(result.error)
         } else {
@@ -56,7 +55,7 @@ const Login = () => {
                             />
                         </div>
 
-                        {/* <Link href="/password/forgot" className="float-right mb-4">Forgot Password?</Link> */}
+                        <Link href="/password/forgot" className="float-right mb-4">Forgot Password?</Link>
 
                         <button
                             id="login_button"

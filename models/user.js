@@ -55,4 +55,19 @@ userSchema.methods.comparePassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password)
 }
 
+// generate password reset token
+userSchema.methods.getResetPasswordToken = function () {
+
+    // Generate the token
+    const resetToken = crypto.randomBytes(20).toString('hex')
+
+    // Hash and set the resetpasswordtoken field
+    this.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex')
+
+    // set token expiry time
+    this.resetPasswordExpire = Date.now() + 30 * 60 * 1000
+
+    return resetToken
+}
+
 export default mongoose.models.User || mongoose.model("User", userSchema)
