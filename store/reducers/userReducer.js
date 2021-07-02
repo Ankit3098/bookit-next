@@ -7,15 +7,33 @@ export const authReducer = (state = { user: null }, action) => {
             return {
                 loading: true
             }
-        case ACTION_TYPES.LOAD_USER_REQUEST:
-            return {
-                loading: true,
-                isAuthenticated: false
-            }
         case ACTION_TYPES.REGISTER_USER_SUCCESS:
             return {
                 loading: false,
                 success: true
+            }
+        case ACTION_TYPES.REGISTER_USER_FAIL:
+            return {
+                loading: false,
+                error: action.payload
+            }
+        case CLEAR_ERRORS:
+            return {
+                ...state,
+                error: null
+            }
+        default:
+            return state
+    }
+}
+
+export const loadUser = (state = { loading: true, user: null }, action) => {
+    switch (action.type) {
+
+        case ACTION_TYPES.LOAD_USER_REQUEST:
+            return {
+                loading: true,
+                isAuthenticated: false
             }
         case ACTION_TYPES.LOAD_USER_SUCCESS:
             return {
@@ -23,11 +41,6 @@ export const authReducer = (state = { user: null }, action) => {
                 success: true,
                 isAuthenticated: true,
                 user: action.payload
-            }
-        case ACTION_TYPES.REGISTER_USER_FAIL:
-            return {
-                loading: false,
-                error: action.payload
             }
         case ACTION_TYPES.LOAD_USER_FAIL:
             return {
