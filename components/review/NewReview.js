@@ -33,8 +33,9 @@ const NewReview = () => {
         if (success) {
             toast.success("Review is posted")
             dispatch({ type: NEW_REVIEW_RESET })
+            router.push(`/room/${id}`)
         }
-    }, [dispatch, success, error])
+    }, [dispatch, success, error, id])
 
     const submitHandler = () => {
         const reviewData = {

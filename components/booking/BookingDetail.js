@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import Image from 'next/image'
 import { MDBDataTable } from 'mdbreact'
 import { useRouter } from 'next/router'
+import { toast } from 'react-toastify'
 import Link from 'next/link'
 import { useDispatch, useSelector } from 'react-redux'
 import { clearError } from '../../store/actions/roomAction'
@@ -13,7 +14,7 @@ const BookingDetail = () => {
     const { booking, error } = useSelector(state => state.bookingDetails)
     const { user } = useSelector(state => state.loadUser)
 
-    const isPaid = booking.paymentInfo && booking.paymentInfo.status === 'paid' ? true : false
+    const isPaid = booking && booking.paymentInfo && booking.paymentInfo.status === 'paid' ? true : false
 
     useEffect(() => {
 

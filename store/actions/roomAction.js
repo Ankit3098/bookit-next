@@ -198,6 +198,47 @@ export const getAdminRooms = () => async (dispatch) => {
 
 }
 
+export const getRoomReviews = (id) => async (dispatch) => {
+    try {
+
+        dispatch({ type: ACTION_TYPE.GET_REVIEWS_REQUEST })
+
+        const { data } = await axios.get(`/api/reviews?id=${id}`)
+
+        dispatch({
+            type: ACTION_TYPE.GET_REVIEWS_SUCCESS,
+            payload: data.reviews
+        })
+
+    } catch (error) {
+        dispatch({
+            type: ACTION_TYPE.GET_REVIEWS_FAIL,
+            payload: error.response.data.message
+        })
+    }
+}
+
+
+export const deleteReview = (id, roomId) => async (dispatch) => {
+    try {
+
+        dispatch({ type: ACTION_TYPE.DELETE_REVIEW_REQUEST })
+
+        const { data } = await axios.delete(`/api/reviews?id=${id}&roomId=${roomId}`)
+
+        dispatch({
+            type: ACTION_TYPE.DELETE_REVIEW_SUCCESS,
+            payload: data.success
+        })
+
+    } catch (error) {
+        dispatch({
+            type: ACTION_TYPE.DELETE_REVIEW_FAIL,
+            payload: error.response.data.message
+        })
+    }
+}
+
 // clear error
 export const clearError = () => async (dispatch) => {
     dispatch({

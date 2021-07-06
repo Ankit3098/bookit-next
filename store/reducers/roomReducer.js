@@ -205,3 +205,69 @@ export const checkReviewReducer = (state = { reviewAvilable: null }, action) => 
     }
 }
 
+export const roomReviewsReducer = (state = { reviews: [] }, action) => {
+    switch (action.type) {
+        case ACTION_TYPE.GET_REVIEWS_REQUEST:
+            return {
+                loading: true
+            }
+
+        case ACTION_TYPE.GET_REVIEWS_SUCCESS:
+            return {
+                loading: false,
+                reviews: action.payload
+            }
+
+        case ACTION_TYPE.GET_REVIEWS_FAIL:
+            return {
+                loading: false,
+                error: action.payload
+            }
+
+        case ACTION_TYPE.CLEAR_ERRORS:
+            return {
+                ...state,
+                error: null
+            }
+
+        default:
+            return state
+    }
+}
+
+
+export const reviewReducer = (state = {}, action) => {
+    switch (action.type) {
+        case ACTION_TYPE.DELETE_REVIEW_REQUEST:
+            return {
+                loading: true
+            }
+
+        case ACTION_TYPE.DELETE_REVIEW_SUCCESS:
+            return {
+                loading: false,
+                isDeleted: action.payload
+            }
+
+        case ACTION_TYPE.DELETE_REVIEW_RESET:
+            return {
+                loading: false,
+                isDeleted: false
+            }
+
+        case ACTION_TYPE.DELETE_REVIEW_FAIL:
+            return {
+                loading: false,
+                error: action.payload
+            }
+
+        case ACTION_TYPE.CLEAR_ERRORS:
+            return {
+                ...state,
+                error: null
+            }
+
+        default:
+            return state
+    }
+}

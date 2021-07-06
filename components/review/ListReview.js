@@ -6,8 +6,8 @@ const ListReview = ({ reviews }) => {
             <h3>Reviews:</h3>
             <hr />
 
-            {reviews && reviews.map((review) => (
-                <div className="review-card my-3">
+            {reviews && reviews.map((review, i) => (
+                <div key={i} className="review-card my-3">
                     <div className="rating-outer">
                         <div className="rating-inner" style={{ width: `${(review.rating / 5) * 100}%` }}></div>
                     </div>

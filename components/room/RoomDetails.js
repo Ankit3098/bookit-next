@@ -49,33 +49,8 @@ const RoomDetails = () => {
         return () => {
             dispatch({ type: CHECK_BOOKING_RESET })
         }
-    }, [dispatch, error])
+    }, [dispatch, error, id])
 
-    const newBookingHandler = async () => {
-        const bookingData = {
-            room: router.query.id,
-            checkInDate,
-            checkOutDate,
-            daysOfStay,
-            amountPaid: 98,
-            paymentInfo: {
-                id: "STRIPE_PAYMENT_ID",
-                status: "STRIPE_PAYMENT_STATUS"
-            }
-        }
-
-        try {
-            const config = {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }
-
-            const { data } = axios.post('/api/bookings', bookingData, config)
-        } catch (error) {
-            console.log(error.response);
-        }
-    }
 
     const onChange = (dates) => {
         const [checkInDate, checkOutDate] = dates
@@ -114,9 +89,7 @@ const RoomDetails = () => {
             setPaymentLoading(false);
 
         } catch (error) {
-
             setPaymentLoading(false);
-            console.log(error);
             toast.error(error.message)
         }
 
