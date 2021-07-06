@@ -10,7 +10,11 @@ module.exports = {
     SMTP_PASSWORD: "aba7ed197b3fb4",
     SMTP_PORT: "2525",
     SMTP_FROM_NAME: 'BookIT',
-    SMTP_FROM_EMAIL: 'noreply@bookit.com'
+    SMTP_FROM_EMAIL: 'noreply@bookit.com',
+
+    STRIPE_PUBLIC_KEY: "pk_test_51J9jHuB8nxXA78cNZpzRTcXKYEEJtwT0zdiLz1uF0V6RcBMJhimpZDx1D1cDTaT0D6Q6TLe46kWY2md041K9rf0G00HWjHEAZ2",
+    STRIPE_SECRET_KEY: "sk_test_51J9jHuB8nxXA78cNMQ7FV6cKqvivqTXZOg9GWvo2NuzziFmCTxs8SNuS14oPf9F2tOdd9p8TAk6kxiIn9kX9I5QR00KfakFFQE",
+    STRIPE_WEBHOOK_SECRET: "whsec_unkrSQngsGIwdnrkrKLCJ6Z4mWjPFUBe"
   },
   images: {
     domains: ['res.cloudinary.com'],

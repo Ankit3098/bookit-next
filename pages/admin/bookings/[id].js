@@ -1,10 +1,10 @@
-import React, { createContext } from 'react'
+import React from 'react'
 import { getSession } from 'next-auth/client'
 
-import Layout from '../../components/Layout/Layout'
-import { wrapper } from '../../store/store'
-import { getBookingDetails } from '../../store/actions/bookingAction'
-import BookingDetail from '../../components/booking/BookingDetail'
+import Layout from '../../../components/Layout/Layout'
+import { wrapper } from '../../../store/store'
+import { getBookingDetails } from '../../../store/actions/bookingAction'
+import BookingDetail from '../../../components/booking/BookingDetail'
 
 const BookingDetailPage = () => {
     return (

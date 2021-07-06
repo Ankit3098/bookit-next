@@ -29,7 +29,14 @@ export const getRoomDetails = (req, id) => async (dispatch) => {
     try {
         const { origin } = absoluteUrl(req);
 
-        const { data } = await axios.get(`${origin}/api/rooms/${id}`)
+        let url;
+        if (req) {
+            url = `${origin}/api/rooms/${id}`
+        } else {
+            url = `/api/rooms/${id}`
+        }
+
+        const { data } = await axios.get(url)
 
         dispatch({
             type: ACTION_TYPE.ROOM_DETAILS_SUCCESS,
@@ -40,6 +47,151 @@ export const getRoomDetails = (req, id) => async (dispatch) => {
     } catch (error) {
         dispatch({
             type: ACTION_TYPE.ROOM_DETAILS_FAIL,
+            payload: error.response.data.message
+        })
+    }
+
+}
+
+export const newReviews = (reviewData) => async (dispatch) => {
+    try {
+        dispatch({ type: ACTION_TYPE.NEW_REVIEW_REQUEST })
+
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+        const { data } = await axios.put(`/api/reviews/`, reviewData, config)
+
+        dispatch({
+            type: ACTION_TYPE.NEW_REVIEW_SUCCESS,
+            payload: data.success
+        })
+
+
+    } catch (error) {
+        dispatch({
+            type: ACTION_TYPE.NEW_REVIEW_FAIL,
+            payload: error.response.data.message
+        })
+    }
+
+}
+
+export const deleteRoom = (id) => async (dispatch) => {
+    try {
+        dispatch({ type: ACTION_TYPE.DELETE_ROOM_REQUEST })
+
+        const { data } = await axios.delete(`/api/rooms/${id}`)
+
+        dispatch({
+            type: ACTION_TYPE.DELETE_ROOM_SUCCESS,
+            payload: data.success
+        })
+
+
+    } catch (error) {
+        dispatch({
+            type: ACTION_TYPE.DELETE_ROOM_FAIL,
+            payload: error.response.data.message
+        })
+    }
+
+}
+
+export const newRoom = (roomData) => async (dispatch) => {
+    try {
+        dispatch({ type: ACTION_TYPE.NEW_ROOM_REQUEST })
+
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+        const { data } = await axios.post(`/api/rooms/`, roomData, config)
+
+        dispatch({
+            type: ACTION_TYPE.NEW_ROOM_SUCCESS,
+            payload: data
+        })
+
+
+    } catch (error) {
+        dispatch({
+            type: ACTION_TYPE.NEW_ROOM_FAIL,
+            payload: error.response.data.message
+        })
+    }
+
+}
+
+export const updateRoom = (id, roomData) => async (dispatch) => {
+    try {
+        dispatch({ type: ACTION_TYPE.UPDATE_ROOM_REQUEST })
+
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+        const { data } = await axios.put(`/api/rooms/${id}`, roomData, config)
+
+        dispatch({
+            type: ACTION_TYPE.UPDATE_ROOM_SUCCESS,
+            payload: data.success
+        })
+
+
+    } catch (error) {
+        dispatch({
+            type: ACTION_TYPE.UPDATE_ROOM_FAIL,
+            payload: error.response.data.message
+        })
+    }
+
+}
+
+export const checkReviewAvailable = (roomId) => async (dispatch) => {
+    try {
+        dispatch({ type: ACTION_TYPE.REVIEW_AVAILABLE_REQUEST })
+
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+        const { data } = await axios.get(`/api/reviews/check_review_availability?roomId=${roomId}`)
+
+        dispatch({
+            type: ACTION_TYPE.REVIEW_AVAILABLE_SUCCESS,
+            payload: data.isReviewAvailable
+        })
+
+
+    } catch (error) {
+        dispatch({
+            type: ACTION_TYPE.REVIEW_AVAILABLE_FAIL,
+            payload: error.response.data.message
+        })
+    }
+
+}
+// all admin rooms
+
+export const getAdminRooms = () => async (dispatch) => {
+    try {
+        dispatch({ type: ACTION_TYPE.ADMIN_ROOMS_REQUEST })
+
+        const { data } = await axios.get(`/api/admin/rooms`)
+
+        dispatch({
+            type: ACTION_TYPE.ADMIN_ROOMS_SUCCESS,
+            payload: data.rooms
+        })
+    } catch (error) {
+        dispatch({
+            type: ACTION_TYPE.ADMIN_ROOMS_FAIL,
             payload: error.response.data.message
         })
     }

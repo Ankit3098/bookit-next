@@ -14,12 +14,16 @@ import { clearError } from '../../store/actions/roomAction'
 import { checkBooking, getBookedDates } from '../../store/actions/bookingAction'
 import { CHECK_BOOKING_RESET } from '../../store/actioTypes/bookingTypes'
 import RoomFeatures from './RoomFeatures'
+import getStripe from '../../utils/getStripe'
+import NewReview from '../review/NewReview'
+import ListReview from '../review/ListReview'
 
 const RoomDetails = () => {
 
     const [checkInDate, setCheckInDate] = useState()
     const [checkOutDate, setCheckOutDate] = useState()
     const [daysOfStay, setDaysOfStay] = useState()
+    const [paymentLoading, setPaymentLoading] = useState(false)
 
     const dispatch = useDispatch()
     const router = useRouter()
@@ -40,6 +44,10 @@ const RoomDetails = () => {
         if (error) {
             toast.error(error)
             dispatch(clearError())
+        }
+
+        return () => {
+            dispatch({ type: CHECK_BOOKING_RESET })
         }
     }, [dispatch, error])
 
@@ -82,6 +90,35 @@ const RoomDetails = () => {
 
         }
 
+
+    }
+
+    const bookRoom = async (id, pricePerNight) => {
+
+        setPaymentLoading(true);
+
+        const amount = pricePerNight * daysOfStay;
+
+
+        try {
+
+            const link = `/api/checkout_session/${id}?checkInDate=${checkInDate.toISOString()}&checkOutDate=${checkOutDate.toISOString()}&daysOfStay=${daysOfStay}`
+
+            const { data } = await axios.get(link, { params: { amount } })
+
+            const stripe = await getStripe();
+
+            // Redirect to checkout
+            stripe.redirectToCheckout({ sessionId: data.session.id })
+
+            setPaymentLoading(false);
+
+        } catch (error) {
+
+            setPaymentLoading(false);
+            console.log(error);
+            toast.error(error.message)
+        }
 
     }
 
@@ -153,7 +190,7 @@ const RoomDetails = () => {
                                 <div className="alert alert-danger my-3 font-weight-bold">Login to book room.</div>
                             }
                             {avaibale && user &&
-                                <button onClick={newBookingHandler} className="btn btn-block py-3 booking-btn">Pay</button>
+                                <button onClick={() => bookRoom(room._id, room.pricePerNight)} disabled={bookiLoading || paymentLoading ? true : false} className="btn btn-block py-3 booking-btn">Pay - ${daysOfStay * room.pricePerNight}</button>
                             }
 
 
@@ -161,30 +198,12 @@ const RoomDetails = () => {
                     </div>
                 </div>
 
+                <NewReview />
 
-                <div className="reviews w-75">
-                    <h3>Reviews:</h3>
-                    <hr />
-                    <div className="review-card my-3">
-                        <div className="rating-outer">
-                            <div className="rating-inner"></div>
-                        </div>
-                        <p className="review_user">by John</p>
-                        <p className="review_comment">Good Quality</p>
-
-                        <hr />
-                    </div>
-
-                    <div className="review-card my-3">
-                        <div className="rating-outer">
-                            <div className="rating-inner"></div>
-                        </div>
-                        <p className="review_user">by John</p>
-                        <p className="review_comment">Good Quality</p>
-
-                        <hr />
-                    </div>
-                </div>
+                {room.reviews && room.reviews.length > 0 ?
+                    <ListReview reviews={room.reviews} /> :
+                    <p><b>No Reviews.</b></p>
+                }
             </div>
 
 

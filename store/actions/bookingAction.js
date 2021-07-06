@@ -67,6 +67,44 @@ export const myBookings = (authCookie, req) => async (dispatch) => {
     }
 }
 
+export const getAdminBookings = () => async (dispatch) => {
+    try {
+        dispatch({ type: ACTION_TYPE.ADMIN_BOOKING_REQUEST })
+
+        const { data } = await axios.get(`/api/admin/bookings`)
+
+        dispatch({
+            type: ACTION_TYPE.ADMIN_BOOKING_SUCCESS,
+            payload: data.bookings
+        })
+
+    } catch (error) {
+        dispatch({
+            type: ACTION_TYPE.ADMIN_BOOKING_FAIL,
+            payload: error.response.data.message
+        })
+    }
+}
+
+export const deleteBooking = (id) => async (dispatch) => {
+    try {
+        dispatch({ type: ACTION_TYPE.DELETE_BOOKING_REQUEST })
+
+        const { data } = await axios.delete(`/api/admin/bookings/${id}`)
+
+        dispatch({
+            type: ACTION_TYPE.DELETE_BOOKING_SUCCESS,
+            payload: data.success
+        })
+
+    } catch (error) {
+        dispatch({
+            type: ACTION_TYPE.DELETE_BOOKING_FAIL,
+            payload: error.response.data.message
+        })
+    }
+}
+
 export const getBookingDetails = (authCookie, req, id) => async (dispatch) => {
     try {
 

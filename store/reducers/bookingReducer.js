@@ -56,12 +56,18 @@ export const bookedDatesReducer = (state = { dates: [] }, action) => {
 
 export const bookingsReducer = (state = { bookings: [] }, action) => {
     switch (action.type) {
+        case ACTION_TYPES.ADMIN_BOOKING_REQUEST:
+            return {
+                loading: true,
+            }
         case ACTION_TYPES.MY_BOOKINGS_SUCCESS:
+        case ACTION_TYPES.ADMIN_BOOKING_SUCCESS:
             return {
                 loading: false,
                 bookings: action.payload
             }
         case ACTION_TYPES.MY_BOOKINGS_FAIL:
+        case ACTION_TYPES.ADMIN_BOOKING_FAIL:
             return {
                 loading: false,
                 error: action.payload
@@ -84,6 +90,37 @@ export const bookingDetailsReducer = (state = { booking: {} }, action) => {
                 booking: action.payload
             }
         case ACTION_TYPES.BOOKING_DETAIL_FAIL:
+            return {
+                loading: false,
+                error: action.payload
+            }
+        case CLEAR_ERRORS:
+            return {
+                ...state,
+                error: null
+            }
+        default:
+            return state
+    }
+}
+
+export const bookingReducer = (state = {}, action) => {
+    switch (action.type) {
+        case ACTION_TYPES.DELETE_BOOKING_REQUEST:
+            return {
+                loading: true
+            }
+        case ACTION_TYPES.DELETE_BOOKING_SUCCESS:
+            return {
+                loading: false,
+                isDelete: action.payload
+            }
+        case ACTION_TYPES.DELETE_BOOKING_RESET:
+            return {
+                loading: false,
+                isDelete: false
+            }
+        case ACTION_TYPES.DELETE_BOOKING_FAIL:
             return {
                 loading: false,
                 error: action.payload

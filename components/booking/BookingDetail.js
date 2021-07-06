@@ -13,6 +13,8 @@ const BookingDetail = () => {
     const { booking, error } = useSelector(state => state.bookingDetails)
     const { user } = useSelector(state => state.loadUser)
 
+    const isPaid = booking.paymentInfo && booking.paymentInfo.status === 'paid' ? true : false
+
     useEffect(() => {
 
         if (error) {
@@ -46,14 +48,14 @@ const BookingDetail = () => {
                             <hr />
 
                             <h4 className="my-4">Payment Status</h4>
-                            {/* <p className={isPaid ? 'greenColor' : 'redColor'}><b>{isPaid ? 'Paid' : 'Not Paid'}</b></p> */}
+                            <p className={isPaid ? 'greenColor' : 'redColor'}><b>{isPaid ? 'Paid' : 'Not Paid'}</b></p>
 
-                            {/* {user && user.role === 'admin' &&
+                            {user && user.role === 'admin' &&
                                 <>
                                     <h4 className="my-4">Stripe Payment ID</h4>
                                     <p className='redColor'><b>{booking.paymentInfo.id}</b></p>
                                 </>
-                            } */}
+                            }
 
                             <h4 className="mt-5 mb-4">Booked Room:</h4>
 
